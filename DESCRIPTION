@@ -15,3 +15,5 @@ RoxygenNote: 7.3.3
 Imports:
     dplyr,
     psych
+URL: https://github.com/LuisEnriqueAngelesGonzalez/ACItools
+BugReports: https://github.com/LuisEnriqueAngelesGonzalez/ACItools/issues
