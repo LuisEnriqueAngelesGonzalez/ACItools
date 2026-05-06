@@ -60,7 +60,6 @@ select_aci_variables <- function(data_scaled,
       return(out)
     }
 
-
 #' @export
 calculate_species_aci <- function(data_scaled,
                                         variables,
