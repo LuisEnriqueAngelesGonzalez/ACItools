@@ -1,5 +1,4 @@
 #' @export
-
   prepare_trait_data <- function(df, species_col = "Species") {
 
     df <- na.omit(df)
@@ -64,7 +63,6 @@ select_aci_variables <- function(data_scaled,
 
 
 #' @export
-
 calculate_species_aci <- function(data_scaled,
                                         variables,
                                         signs,
@@ -101,7 +99,6 @@ calculate_species_aci <- function(data_scaled,
 
 
 #' @export
-
 calculate_community_aci <- function(abundance_df,
                                             species_aci,
                                             species_col = "Species",
