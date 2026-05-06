@@ -1,3 +1,6 @@
+#' @importFrom magrittr %>%
+NULL
+
 #' @export
   prepare_trait_data <- function(df, species_col = "Species") {
 
