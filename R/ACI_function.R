@@ -143,3 +143,6 @@ calculate_community_aci <- function(abundance_df,
           ))
         }
 
+#' @importFrom magrittr %>%
+NULL
+
