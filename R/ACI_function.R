@@ -2,7 +2,7 @@
 NULL
 
 #' @export
-  prepare_trait_data <- function(df, species_col = "Species") {
+prepare_trait_data <- function(df, species_col = "Species") {
 
     df <- na.omit(df)
 
@@ -146,6 +146,4 @@ calculate_community_aci <- function(abundance_df,
           ))
         }
 
-#' @importFrom magrittr %>%
-NULL
 
