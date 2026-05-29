@@ -101,49 +101,61 @@ calculate_species_aci <- function(data_scaled,
 
 #' @export
 calculate_community_aci <- function(abundance_df,
-                                            species_aci,
-                                            species_col = "Species",
-                                            abundance_col = "Abundance",
-                                            transect_col = "Site_sample",
-                                            locality_col = "Locality",
-                                            aci_col = "ACI_rescaled") {
+                                    species_aci,
+                                    species_col = "Species",
+                                    abundance_col = "Abundance",
+                                    transect_col = "Site_sample",
+                                    locality_col = "Locality",
+                                    aci_col = "ACI_rescaled") {
 
-          required_cols <- c(species_col, abundance_col, transect_col, locality_col)
+  # --- Chequeos ---
+  required_cols <- c(species_col, abundance_col, transect_col, locality_col)
+  if (!all(required_cols %in% names(abundance_df))) {
+    stop("Some required columns are missing from abundance_df.")
+  }
 
-          if(!all(required_cols %in% names(abundance_df))) {
-            stop("Some required columns are missing from abundance_df.")
-          }
+  if (!all(c(species_col, aci_col) %in% names(species_aci))) {
+    stop("species_aci must contain species_col and aci_col.")
+  }
 
-          if(!all(c(species_col, aci_col) %in% names(species_aci))) {
-            stop("species_aci must contain species_col and aci_col.")
-          }
+  # --- Join ---
+  df_joined <- abundance_df %>%
+    dplyr::left_join(species_aci[, c(species_col, aci_col)],
+                     by = species_col)
 
-          df_joined <- abundance_df %>%
-            dplyr::left_join(species_aci[, c(species_col, aci_col)], by = species_col) %>%
-            na.omit()
+  nas_aci <- sum(is.na(df_joined[[aci_col]]))
+  if (nas_aci > 0) {
+    warning(paste0(nas_aci, " rows (", round(nas_aci/nrow(df_joined)*100, 1),
+                   "%) had no ACI value and were removed."))
+  }
 
-          df_species_weighted <- df_joined %>%
-            dplyr::group_by(.data[[transect_col]]) %>%
-            dplyr::mutate(
-              RA = .data[[abundance_col]] / sum(.data[[abundance_col]], na.rm = TRUE),
-              ACIw = .data[[aci_col]] * RA,
-              ACIc = sum(ACIw, na.rm = TRUE)
-            ) %>%
-            dplyr::ungroup()
+  df_joined <- df_joined %>% na.omit()
 
-          df_comm <- df_species_weighted %>%
-            dplyr::group_by(.data[[locality_col]], .data[[transect_col]]) %>%
-            dplyr::summarise(
-              ACIc = dplyr::first(ACIc),
-              total_abundance = sum(.data[[abundance_col]], na.rm = TRUE),
-              richness = dplyr::n_distinct(.data[[species_col]]),
-              .groups = "drop"
-            )
+  df_species_weighted <- df_joined %>%
+    dplyr::group_by(.data[[transect_col]]) %>%
+    dplyr::mutate(
+      RA = .data[[abundance_col]] / sum(.data[[abundance_col]], na.rm = TRUE),
+      ACIw = .data[[aci_col]] * RA,
+      ACIc = sum(ACIw, na.rm = TRUE)
+    ) %>%
+    dplyr::ungroup()
 
-          return(list(
-            species_weighted = df_species_weighted,
-            community_transect = df_comm
-          ))
-        }
+  df_comm <- df_species_weighted %>%
+    dplyr::group_by(.data[[locality_col]], .data[[transect_col]]) %>%
+    dplyr::summarise(
+      ACIc = dplyr::first(ACIc),
+      total_abundance = sum(.data[[abundance_col]], na.rm = TRUE),
+      richness = dplyr::n_distinct(.data[[species_col]]),
+      .groups = "drop"
+    )
 
-
+  return(list(
+    species_weighted = df_species_weighted,
+    community_transect = df_comm,
+    match_summary = list(
+      total_rows = nrow(abundance_df),
+      matched_rows = nrow(df_joined),
+      match_percentage = round(nrow(df_joined)/nrow(abundance_df)*100, 2)
+    )
+  ))
+}
