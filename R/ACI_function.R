@@ -1,4 +1,4 @@
-#' @importFrom magrittr %>%
+#' @import dplyr
 NULL
 
 #' @export
