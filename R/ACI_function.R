@@ -108,7 +108,6 @@ calculate_community_aci <- function(abundance_df,
                                     locality_col = "Locality",
                                     aci_col = "ACI_rescaled") {
 
-  # --- Chequeos ---
   required_cols <- c(species_col, abundance_col, transect_col, locality_col)
   if (!all(required_cols %in% names(abundance_df))) {
     stop("Some required columns are missing from abundance_df.")
@@ -118,7 +117,6 @@ calculate_community_aci <- function(abundance_df,
     stop("species_aci must contain species_col and aci_col.")
   }
 
-  # --- Join ---
   df_joined <- abundance_df %>%
     dplyr::left_join(species_aci[, c(species_col, aci_col)],
                      by = species_col)
@@ -129,8 +127,9 @@ calculate_community_aci <- function(abundance_df,
                    "%) had no ACI value and were removed."))
   }
 
-  df_joined <- df_joined %>% na.omit()
-
+  df_joined <- df_joined %>%
+    dplyr::filter(!is.na(.data[[aci_col]]))
+    
   df_species_weighted <- df_joined %>%
     dplyr::group_by(.data[[transect_col]]) %>%
     dplyr::mutate(
