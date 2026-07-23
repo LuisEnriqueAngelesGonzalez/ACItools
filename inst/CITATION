@@ -1,0 +1,13 @@
+citHeader("To cite ACItools in publications use:")
+
+bibentry(
+  bibtype = "Manual",
+  title = "ACItools: Adaptive Capacity Index Calculation from Species Traits and Abundance Data",
+  author = person(
+    given = "Luis Enrique",
+    family = "Angeles Gonzalez"
+  ),
+  year = "2026",
+  note = "R package version 0.1.0",
+  url = "https://github.com/LuisEnriqueAngelesGonzalez/ACItools"
+)
