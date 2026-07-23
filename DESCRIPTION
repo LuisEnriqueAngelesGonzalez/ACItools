@@ -1,6 +1,6 @@
 Package: ACItools
 Title: Adaptive Capacity Index Calculation from Species Traits and Abundance Data
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: 
     person("Luis Enrique", "Angeles Gonzalez", email = "luis.angeles0612@gmail.com", role = c("aut", "cre"))
 Description: 
